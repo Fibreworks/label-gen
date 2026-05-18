@@ -14,19 +14,21 @@ function saveImageToPrintHistory(base64Image) {
         company: gebi('company').selectedIndex,
         part: gebi('part').value,
         rev: gebi('rev').value,
-        wo: gebi('wonum').value,
+        wo: settings.lbType == 'srastyle' ? gebi('po').value : gebi('wonum').value,
         empId: gebi('emp').value,
-        qty: gebi('qty').value,
-        lot: lotCode, // lot code is generated in updateLotBarcode() and itn't accessible elsewhere so i made lotCode global instead...
+        qty: settings.lbType == 'srastyle' ? gebi('nqty').value : gebi('qty').value,
+        lot: lotCode || '', // lot code is generated in updateLotBarcode() and itn't accessible elsewhere so i made lotCode global instead...
         fullPart: fullPn, // same thing as lot- made global
         date: Date.now(),
         ncr: gebi('ncr').value,
         cc: gebi('cc').value,
         exp: gebi('exp').valueAsNumber || 0,
         ptn: gebi('ptn').value,
-        desc: gebi('desc').value,
+        desc: settings.lbType == 'srastyle' ? gebi('ndesc').value : gebi('desc').value,
         rid: gebi('rid').value,
         dept: gebi('dept').value,
+        nfwcpn: gebi('nfwcpn').value, // nfwc = non-fwc. all kinda a workaround
+        nfwcserial: gebi('nserial').value,
         img: base64Image
     }
     console.log(data)
@@ -126,25 +128,43 @@ function reloadPrint(id) {
 
     const lbType = gebi('labelType')
     lbType.value = print.lbType
-    const e = new Event('change')
-    lbType.dispatchEvent(e)
+    const evChange = new Event('change')
+    lbType.dispatchEvent(evChange)
+
+    const evInput = new Event('input')
 
     lbTypeChange(print.lbType)
+
     
     gebi('part').value = print.part
     gebi('rev').value = print.rev
     gebi('lot').value = print.lot
     gebi('wonum').value = print.wo
+    const npo = gebi('po')
+    npo.value = print.wo
+    npo.dispatchEvent(evInput)
     gebi('cc').value = print.cc
     gebi('ptn').value = print.ptn
     gebi('desc').value = print.desc
+    const ndesc = gebi('ndesc')
+    ndesc.value = print.desc
+    ndesc.dispatchEvent(evInput)
     gebi('rid').value = print.rid
     gebi('dept').value = print.dept
     gebi('company').selectedIndex = print.company
+    const nfwcpn = gebi('nfwcpn')
+    nfwcpn.value = print.nfwcpn
+    nfwcpn.dispatchEvent(evInput)
+    const nserial = gebi('nserial')
+    nserial.value = print.nfwcserial
+    nserial.dispatchEvent(evInput)
     
     gebi('qty').value = print.qty
     const lbqty = gebi('sslbquantity')
     if (lbqty) lbqty.textContent = print.qty
+    const nqty = gebi('nqty')
+    nqty.value = print.qty
+    nqty.dispatchEvent(evInput)
     
     gebi('emp').value = print.empId
     const lbeid = gebi('sslbemployeeid')

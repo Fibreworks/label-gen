@@ -1,6 +1,6 @@
 function lbTypeChange(value) {
-    if (getSetting('lbType') == 'invconsumables') {
-        restoreFromInvC()
+    if ((getSetting('lbType') == 'invconsumables') || (getSetting('lbType') == 'srastyle')) {
+        undoHacks()
     }
     updateSetting("lbType", value)
     updateLotBarcode()
@@ -19,6 +19,7 @@ function lbTypeChange(value) {
     const qtydiv = gebi('qtydiv')
     const wodiv = gebi('wodiv')
     const wopo = gebi('wopo')
+    const astylePropertiesDiv = gebi('astylePropertiesDiv')
     ccdiv.hidden = false
     ncrdiv.hidden = true
     expdiv.hidden = true
@@ -26,7 +27,10 @@ function lbTypeChange(value) {
     qtydiv.hidden = false
     wodiv.hidden = false
     wopo.textContent = 'Work Order:'
+    astylePropertiesDiv.hidden = true
+    document.getElementsByClassName('hrNoTBMargin')[0].classList.remove('hide')
     document.getElementsByClassName('hrNoTBMargin')[1].classList.remove('hide')
+
     switch (value) {
         case 'machwip': // machWip
             createSubsections(['WO Number', 'Employee ID', 'Quantity'])
@@ -76,6 +80,15 @@ function lbTypeChange(value) {
             srSections('std')
             wopo.textContent = 'PO Number:'
             break;
+        case 'srastyle':
+            astylePropertiesDiv.hidden = false
+            wodiv.hidden = true
+            ccdiv.hidden = true
+            qtydiv.hidden = true
+            gebi('lot').disabled = true            
+
+            srAStyle();
+            break;
         default:
             showWarningMessage('invalid label type selection!')
     }
@@ -116,7 +129,7 @@ function invConsumables() {
     gebi('lot').disabled = true
 }
 
-function restoreFromInvC() {
+function undoHacks() {
     clearSubsections('topsection')
     // clearSubsections('midsectoin')
     loadStdTopsection()
@@ -126,6 +139,9 @@ function restoreFromInvC() {
     gebi('lot').disabled = false
     updateLotBarcode()
     updatePnBarcode()
+    gebi('astyleDiv').classList.add('hide')
+    gebi('labelData').classList.remove('hide')
+    gebi('logo').style = '' // should always be empty, unless it's been messed with
 }
 
 function loadStdTopsection() {
@@ -149,7 +165,6 @@ function loadStdMidsection() {
     `
 }
 
-
 function getSubsectionName(name) {
     return ('sslb' + name.replace(/[^a-zA-Z0-9.,_-]/g, '').toLowerCase())
 }
@@ -163,6 +178,57 @@ function srSections(type) {
         ms.children[0].classList.add('ss23')
         ms.children[0].classList.add('vr')
     }
+}
+
+function srAStyle() {
+    // change to dedicated div for this label style
+    const labelData = gebi('astyleDiv')
+    labelData.classList.remove('hide')
+    gebi('labelData').classList.add('hide')
+
+    // set company to cf
+    const companySelector = gebi('company')
+    companySelector.selectedIndex = 1
+    companySelector.dispatchEvent(new Event('change'))
+
+    // logo img manipulation
+    const logoImg = gebi('logo')
+    logoImg.style.transform = 'rotate(0deg)'
+    logoImg.style.marginLeft = '-180px'
+    logoImg.style.marginTop = '10px'
+    logoImg.style.maxWidth = '1.375in'
+    
+    // listeners
+    
+    const nfwcpn = gebi('nfwcpn')
+    nfwcpn.addEventListener('input', (e) => {
+        gebi('pnQr').innerHTML = '' // clear div
+        new QRCode(document.getElementById("pnQr"), {
+            text: nfwcpn.value,
+            width: 256,
+            height: 256,
+            border: 4,
+            colorDark: "#000000",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H
+        });
+        gebi('sslbnfwcpn2').textContent = nfwcpn.value
+    })
+
+    const nserial = gebi('nserial')
+    nserial.addEventListener('input', (e) => {
+        gebi('serialQr').innerHTML = '' // clear div
+        new QRCode(document.getElementById("serialQr"), {
+            text: nserial.value,
+            width: 256,
+            height: 256,
+            border: 4,
+            colorDark: "#000000",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H
+        });
+        gebi('sslbserial2').textContent = nserial.value
+    })
 }
 
 function cleanMidsection() {

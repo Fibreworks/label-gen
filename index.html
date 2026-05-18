@@ -8,6 +8,7 @@
         <!-- load scripts at the bottom of html -->
         <script src='https://cdn.jsdelivr.net/npm/jsbarcode@3.12.1/dist/barcodes/JsBarcode.code128.min.js'></script>
         <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+        <script src='scripts/qrcode.js'></script>
 
         <link rel='stylesheet' href='styles/main.css'>
         <link rel='stylesheet' href='styles/sidebar.css'>
@@ -43,6 +44,7 @@
                     <option value="qcinsp">QC Inspect</option>
                     <option disabled>-- S&R --</option>
                     <option value="srstd">S&R Standard</option>
+                    <option value="srastyle">S&R A-Style</option>
                 </select>
             </div>
             <div class='headerItem'>
@@ -70,7 +72,7 @@
                 <div id='img'>
                     <img id='logo' class='logo' src='./img/fw.png' alt='Fibreworks Composites Logo'>
                 </div>
-                <div class='data'>
+                <div class='data' id='labelData'>
                     <div id='topsection' class='section flex'>
                         <p class='bcNote'>PN</p>
                         <div class='barcodeContainer'>
@@ -90,6 +92,26 @@
     
                     <!-- subsections dynamically created -->
                     <div id='lowersection' class='section flex'></div>
+                </div>
+                <div class='hide' id='astyleDiv'>
+                    <!-- this is awful, this is bad.., just need to hold up until 2.0.... -->
+                    <p style="position: relative; top: 9px; left: 0px; font-weight: bolder;">Part Label</p>
+                    <p style="position: relative; top: 15px; left: -125px; font-weight: bolder">Part Number</p>
+                    <p style="position: relative; top: -16px; left: -20px; font-weight: bolder">Serial</p>
+                    <p style="position: relative; top: -60px; left: 237px; text-align: left; width: 147px; font-weight: bolder">FWC PN</p>
+                    <p style="position: relative; top: -47px; left: 237px; text-align: left; width: 147px; font-weight: bolder">Qty</p>
+                    <p style="position: relative; top: -35px; left: 237px; text-align: left; width: 147px; font-weight: bolder">Description</p>
+                    <p style="position: relative; top: -25px; left: 237px; text-align: left; width: 147px; font-weight: bolder">PO #</p>
+                    <p id='sslbnfwcpn' style="position: relative; top: -150px; left: -125px; height: 15px;"></p>
+                    <p id='sslbserial' style="position: relative; top: -178px; left: -20px; height: 15px;"></p>
+                    <p id='sslbfwcpn' style="position: relative; top: -220px; left: 237px; text-align: left; width: 147px; height: 15px;"></p>
+                    <p id='sslbqty' style="position: relative; top: -205px; left: 237px; text-align: left; width: 147px; height: 15px;"></p>
+                    <p id='sslbndesc' style="position: relative; top: -190px; left: 237px; text-align: left; width: 147px; height: 15px;"></p>
+                    <p id='sslbpo' style="position: relative; top: -180px; left: 237px; text-align: left; width: 147px; height: 15px;"></p>
+                    <div id="pnQr" style="position: relative; width: 100px; height: 100px; top: -300px; left: 18px;"></div>
+                    <div id="serialQr" style="position: relative; width: 100px; height: 100px; top: -400px; left: 123px;"></div>
+                    <p id='sslbnfwcpn2' style="position: relative; top: -420px; left: -125px; height: 15px; font-size: smaller;"></p>
+                    <p id='sslbserial2' style="position: relative; top: -446px; left: -20px; height: 15px; font-size: smaller;"></p>
                 </div>
             </div>
     
@@ -113,11 +135,42 @@
                     <input type="text" name="lot" id="lot" placeholder='defaults to WO# and date' oninput='updateLotBarcode()'>
                     <p style='color: red;' id='lotNote' hidden>Note: If above lot number is filled in, the lot number will not be automatically calculated according to WO/PO number, todays date, and CC if applicable.</p>
                     <hr>
-                    <div id='ptndiv'>
-                        <label for="ptn">Part/Tool Number:</label>
-                        <input type="text" name="ptn" id="ptn" placeholder='00000XX0000' oninput='gebi("sslbparttoolnumber").textContent = this.value'>
-                        <br>
+                    <div id='astylePropertiesDiv'>
+                        
+                        <div id=''>
+                            <label for="nfwcpn">Non FWC PN:</label>
+                            <input type="text" name="nfwcpn" id="nfwcpn" placeholder='00000XX0000' oninput='gebi("sslbnfwcpn").textContent = this.value'>
+                            <br>
+                        </div>
+                        <div id=''>
+                            <label for="nserial">Serial number:</label>
+                            <input type="text" name="nserial" id="nserial" placeholder='0000-0000-0000' oninput='gebi("sslbserial").textContent = this.value'>
+                            <br>
+                        </div>
+                        <div id=''>
+                            <label for="nqty">Quantity:</label>
+                            <input type="text" name="nqty" id="nqty" placeholder='00' oninput='gebi("sslbqty").textContent = this.value'>
+                            <br>
+                        </div>
+                        <div id=''>
+                            <label for="ndesc">Description:</label>
+                            <input type="text" name="ndesc" id="ndesc" placeholder='Item' oninput='gebi("sslbndesc").textContent = this.value'>
+                            <br>
+                        </div>
+                        <div id=''>
+                            <label for="po">Purchase Order:</label>
+                            <input type="text" name="po" id="po" placeholder='000000-000' oninput='gebi("sslbpo").textContent = this.value'>
+                            <br>
+                        </div>
+                        
+
                     </div>
+
+                    <div id='ptndiv'>
+                            <label for="ptn">Part/Tool Number:</label>
+                            <input type="text" name="ptn" id="ptn" placeholder='00000XX0000' oninput='gebi("sslbparttoolnumber").textContent = this.value'>
+                            <br>
+                        </div>
                     <div id='descdiv'>
                         <label for="desc">Item Description:</label>
                         <input type="text" name="desc" id="desc" placeholder='Diab HP80 25.4mm' oninput='gebi("sslbitemdescription").textContent = this.value'>
@@ -189,7 +242,7 @@
                     <path d="M8 3a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3"/>
                 </svg>
             </button>
-            <p>1.3.0.3</p>
+            <p>1.3.1.0</p>
         </div>
     </body>
     <!-- script load here -->

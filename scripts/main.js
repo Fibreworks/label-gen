@@ -1,16 +1,22 @@
 document.addEventListener('DOMContentLoaded', () => { // hmm
-    // setup stuff
-    setFromSettings() // prepares defaults
-    metricsMgr = new LabelGenMetrics()
-    metricsMgr.startTimer()
-    metricsMgr.setMetric('pageLoads', Number.parseInt(metricsMgr.getMetric('pageLoads')) + 1)
-
-    checkUrlParams() // then check url params so the rest can be updated accordingly
-
-    updatePnBarcode()
-    updateLotBarcode()
-    updateCompany()
-    loadPrintHistory()
+    try {
+        // setup stuff
+        setFromSettings() // prepares defaults
+        metricsMgr = new LabelGenMetrics()
+        metricsMgr.startTimer()
+        metricsMgr.setMetric('pageLoads', Number.parseInt(metricsMgr.getMetric('pageLoads')) + 1)
+    
+        checkUrlParams() // then check url params so the rest can be updated accordingly
+    
+        updatePnBarcode()
+        updateLotBarcode()
+        updateCompany()
+        loadPrintHistory()
+    } catch (e) {
+        // catch errors instead of silently failing.
+        showWarningMessage(`Fatal error on startup: ${e}<br><br>Please report this error.`, 86400, 'red')
+        console.error(e)
+    }
 })
 
 let metricsMgr;
@@ -26,7 +32,6 @@ function setFromSettings() {
     const e = new Event('change')
     lbType.dispatchEvent(e)
 
-    lbTypeChange(settings.lbType)
     gebi('company').selectedIndex = settings.cmp
     gebi('printType').selectedIndex = settings.printType
     setPrintType(settings.printType)
@@ -170,9 +175,14 @@ function handlePnParam(partNumber) {
 
 let fullPn;
 function updatePnBarcode(){
-    if (gebi('labelType').value == 'invconsumables') return;
+    if ((gebi('labelType').value == 'invconsumables')) return;
     const pn = gebi('part').value
     const rev = gebi('rev').value
+
+    if (gebi('labelType').value == 'srastyle') {
+        const fwcpn = gebi('sslbfwcpn').textContent = `${pn}-${rev}`
+    }
+
     fullPn = generatePartNumber(pn, rev)
     generateBarcode('#pn', fullPn, 1.25)
 }
@@ -223,7 +233,7 @@ function updateLotBarcode(){
     const ccHidden = gebi('ccdiv').hidden
     const sslblot = gebi('sslblot')
     
-    if (lbType == 'invconsumables'){
+    if ((lbType == 'invconsumables') || (lbType == 'srastyle')){
         return;
         // this lbtype removes the required elements. when switching away, this should be returned.
     }
@@ -338,7 +348,7 @@ async function printUsingApp() {
     console.log(imgData)
     console.log(imgData.length)
     
-    open(`fwcpa://print`)
+    open(`fwcpa://print`, '_self')
     wsSetImage(imgData) // set imgdata
     wsStart() // start the server and send data once connected
 
@@ -423,6 +433,8 @@ function validatePn(pn) {
 // todo: add ability to check if wo is actaully a po number...
 let oneTimeSkipWoValid
 function validateWoNum(wo) {
+    const woDiv = gebi('wodiv').hidden
+    if (woDiv) return true;
     if (!wo) {
         return confirm('No WO/PO number is entered. Print regardless?')
     }

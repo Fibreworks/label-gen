@@ -1,5 +1,10 @@
 What's new?
 -------------------
+**version 1.3.1.0**
+* *New label added*
+* * "S&R A-Style"
+* Fixed a few small details.
+-------------------
 **version 1.3.0.3**
 * *QC Fail label:*
 * * Added date under LOT code
