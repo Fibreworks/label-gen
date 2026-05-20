@@ -12,23 +12,25 @@ Supported printers and labels
 
 Installation
 -------------------
-1. Install files are located in `Y:\Software\`
-1. Open the `dotnet` folder and copy `windowsdesktop-runtime-10.0.1-win-x64` to your desktop and run the installer.
+1. Install files are located in `Y:\Software\FWCPrintApp`
+1. Copy `windowsdesktop-runtime-10.0.1-win-x64` to your desktop and run the installer.
 1. Click on "Install" and let the installer finish.
-1. Once finished, go back to the `Software` folder and find `Install FWCPrintApp`. Copy the installer to your desktop and run the installer.
+1. Once finished, go back to the `FWCPrintApp` folder and find `InstallFWCPrintApp`. Copy the installer to your desktop and run the installer.
 1. When the installer opens, click on "Install only for me"
 1. Once the installer finishes, there is a checkbox "Launch FWCPrintApp" that is checked. Leave it checked so that the app can be configured.
-1. Click on "Finish" and the app will open and will ask to select a printer.
+1. Click on "Finish." The app will open and will ask to select a printer. Click "OK" on the "No data recieved after 5 seconds." message. This only pops up since we're running the app outside of the web app.
 1. Click on the "Settings" tab and select the printer to be used.\
 ![fwc logo](./img/appinstall/pasettings.png)
 1. The app has now been installed and ready for use. It's safe to close the app now.
 
 Testing the configuration
 -------------------
-1. Open the web app, and look for the "Print using" drop down menu. Select "FWCPrintApp"\
+1. Open the web app, and look for the "Print using" drop down menu. Select "FWCPrintApp" if not already selected.\
 ![Location of Print Using drop down menu](./img/appinstall/printusing.png)
 1. Click on the print button. The label does not need to be filled out as this is just to test the configuration.
-1. A new tab will open and will ask if the app should be opened. Click on the "always open this application" check box and then click "open"
+1. A popup will appear and will ask if the app should be opened. Click on the "always open this application" check box and then click "open"
+1. Another popup may appear asking for "Access other apps and services on this device." Click on "Allow."\
+![Access other apps and services on this device.](./img/appinstall/popup2.png)
 1. The print app should open and should show a preview of the label.
 1. Click print or hit the "Enter" key to print.
 1. Check the printer and make sure the label came out correctly.
