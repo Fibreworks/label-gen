@@ -232,17 +232,24 @@ function updateLotBarcode(){
     const lbType = gebi('labelType').value
     const ccHidden = gebi('ccdiv').hidden
     const sslblot = gebi('sslblot')
+    const lbwo = gebi('sslbwonumber') // not guranteed to exist; use if()
     
     if ((lbType == 'invconsumables') || (lbType == 'srastyle')){
         return;
         // this lbtype removes the required elements. when switching away, this should be returned.
     }
 
+    if (!wo) {
+        sslblot.innerHTML = ''
+        if (lbwo) lbwo.textContent = ''
+        return;
+    }
+
     let width = 'larger' // full width
     if ((lbType.startsWith('qc')) || (lbType.startsWith('sr'))) width = 'large' // qc labels and s&r labels should just be large, not larger
     sslblot.classList.replace(sslblot.classList[0], width)
 
-    lbwo = gebi('sslbwonumber')
+    
     if (lbwo) lbwo.textContent = wo
 
     lotCode = generateMachLot(wo, ccHidden ? '' : cc)
