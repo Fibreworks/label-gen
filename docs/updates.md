@@ -1,6 +1,9 @@
 What's new?
 -------------------
 **version 1.3.1.1**
+* Fixed issue where LOT will not appear if using the "lot number" field and wo/po number is empty.
+-------------------
+**version 1.3.1.1**
 * Removed LOT autofill before input.
 -------------------
 **version 1.3.1.0**

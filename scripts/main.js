@@ -226,7 +226,7 @@ function updateCompany(){
 
 let lotCode;
 function updateLotBarcode(){
-    const input = gebi('lot').value
+    const lotOverride = gebi('lot').value
     const wo = gebi('wonum').value
     const cc = gebi('cc').value
     const lbType = gebi('labelType').value
@@ -239,7 +239,7 @@ function updateLotBarcode(){
         // this lbtype removes the required elements. when switching away, this should be returned.
     }
 
-    if (!wo) {
+    if (!wo && !lotOverride) {
         sslblot.innerHTML = ''
         if (lbwo) lbwo.textContent = ''
         return;
@@ -253,8 +253,8 @@ function updateLotBarcode(){
     if (lbwo) lbwo.textContent = wo
 
     lotCode = generateMachLot(wo, ccHidden ? '' : cc)
-    if (input) {
-        lotCode = input
+    if (lotOverride) {
+        lotCode = lotOverride
         gebi('lotNote').hidden = false
     } else {
         gebi('lotNote').hidden = true
