@@ -1,6 +1,13 @@
 What's new?
 -------------------
-**version 1.3.1.1**
+**version 1.3.1.4**
+* Fixed broken thing. (printing with FWCPrintApp)
+* Added banner and rediect to new URL.
+-------------------
+**version 1.3.1.3**
+* broke things. (printing with FWCPrintApp)
+-------------------
+**version 1.3.1.2**
 * Fixed issue where LOT will not appear if using the "lot number" field and wo/po number is empty.
 -------------------
 **version 1.3.1.1**

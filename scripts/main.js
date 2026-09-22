@@ -48,6 +48,7 @@ function checkUrlParams(){
     const urlRid = params.get('rid')
     const urlDept = params.get('dept')
     const urlQty = params.get('qty')
+    const urlRedirFrom = params.get('redirfrom')
     
     const disableMetrics = params.get('disableMetrics') == 'true' ? true : false
     const currentMetricState = metricsMgr.getMetric('disableMetrics')
@@ -55,6 +56,12 @@ function checkUrlParams(){
 
     if (currentMetricState != disableMetrics) {
        showWarningMessage(`Metrics have been ${disableMetrics ? 'disabled' : 'enabled'}.`, 5, 'yellow')
+    }
+
+    if (urlRedirFrom) {
+        if (urlRedirFrom == 'legacy') {
+            showWarningMessage('Please update bookmarks and shortcuts to use this new URL.', 5, 'yellow')
+        }
     }
     
     // part number parsing stuff
