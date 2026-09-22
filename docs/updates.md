@@ -1,6 +1,9 @@
 What's new?
 -------------------
 **version 1.3.1.4**
+* Removed redirect flag from url on load so bookmarking does not make the message show every time.
+-------------------
+**version 1.3.1.4**
 * Fixed broken thing. (printing with FWCPrintApp)
 * Added banner and rediect to new URL.
 -------------------

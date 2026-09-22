@@ -61,6 +61,11 @@ function checkUrlParams(){
     if (urlRedirFrom) {
         if (urlRedirFrom == 'legacy') {
             showWarningMessage('Please update bookmarks and shortcuts to use this new URL.', 5, 'yellow')
+            params.delete('redirfrom')
+            const newUrl = `${window.location.origin}${window.location.pathname}${params.size > 0 ? '?' : ''}${params.toString()}`
+            const state = { page: 'home' }
+            console.log(newUrl)
+            history.replaceState(state, '' , newUrl)
         }
     }
     
